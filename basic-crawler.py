@@ -87,7 +87,6 @@ def crawl_controller(seed, max_depth=1):
                 elif url not in index[word]:
                     index[word].append(url)
             if not to_crawl:
-                print('going next level deep')
                 to_crawl, next_depth = next_depth, []
                 current_depth += 1
 
