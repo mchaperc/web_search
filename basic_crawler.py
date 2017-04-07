@@ -1,14 +1,7 @@
 import requests, string
+import jobs
 
 from bs4 import BeautifulSoup
-
-link1 = "https://news.ycombinator.com/"
-link2 = "https://www.yahoo.com"
-link3 = "http://stackexchange.com/"
-link4 = "http://dmoztools.net/"
-link5 = "https://twitter.com/"
-
-index = {}
 
 def union(arr1, arr2):
     for el in arr2:
@@ -77,22 +70,15 @@ def crawl_controller(seed, max_depth=1):
     current_depth = 0
     while len(to_crawl) and current_depth <= max_depth:
         url = to_crawl.pop()
-        if url not in index:
+        if url not in jobs.index:
             page = get_page(url)
             keywords = get_keywords(page)
             next_depth = union(next_depth, get_links(page, url))
             for word in keywords:
-                if word not in index:
-                    index[word] = [url]
-                elif url not in index[word]:
-                    index[word].append(url)
+                if word not in jobs.index:
+                    jobs.index[word] = [url]
+                elif url not in jobs.index[word]:
+                    jobs.index[word].append(url)
             if not to_crawl:
-                print('going next level deep')
                 to_crawl, next_depth = next_depth, []
                 current_depth += 1
-
-crawl_controller(link1, 1)
-crawl_controller(link2, 1)
-crawl_controller(link3, 1)
-crawl_controller(link4, 1)
-crawl_controller(link5, 1)
