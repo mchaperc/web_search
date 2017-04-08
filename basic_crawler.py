@@ -1,6 +1,8 @@
 import requests, string
 import jobs
 
+from utils import split_string
+
 from bs4 import BeautifulSoup
 
 def union(arr1, arr2):
@@ -8,22 +10,6 @@ def union(arr1, arr2):
         if el not in arr1:
             arr1.append(el)
     return arr1
-
-def split_string(source, splitlist=' ,;?\n&'):
-    result = []
-    begin_index = 0
-    end_index = 0
-    for char in source:
-        if char in splitlist:
-            if end_index - begin_index > 0:
-                result.append(source[begin_index:end_index])
-                begin_index = end_index+1
-            else:
-                begin_index += 1
-        elif len(source) == end_index+1:
-            result.append(source[begin_index:])
-        end_index += 1
-    return result
 
 
 def get_keywords(page):
@@ -38,6 +24,7 @@ def get_keywords(page):
     keywords += split_string(page)
     return keywords
 
+
 def get_links(page, current_url):
     links = page.find_all('a', href=True)
     result = []
@@ -48,6 +35,7 @@ def get_links(page, current_url):
             else:
                 result.append(link.get('href'))
     return result
+
 
 def get_page(url):
     page_as_string = ''
@@ -63,6 +51,7 @@ def get_page(url):
     except requests.exceptions.InvalidSchema as err:
         print(err)
     return BeautifulSoup(page_as_string, 'html.parser')
+
 
 def crawl_controller(seed, max_depth=1):
     to_crawl = [seed]
