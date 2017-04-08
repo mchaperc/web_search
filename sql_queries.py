@@ -28,10 +28,20 @@ SQL_INSERT_URL_ROWS = """
       (unnest(array[:keyword_ids]), (unnest(array[:urls_text])))
 """
 
-SQL_GET_KEYWORDS = """
+SQL_GET_URLS_FROM_KEYWORDS = """
     SELECT
-      keyword.id as id,
-      keyword.keyword_text as text
+      url.url_text AS url
     FROM
-      keyword
+      keyword,
+      url
+    WHERE
+      keyword.keyword_text IN :search_query
+      AND url.keyword_id = keyword.id
+"""
+
+SQL_GET_URLS_WITHOUT_KEYWORDS = """
+    SELECT
+        url.url_text AS url
+    FROM
+        url
 """
