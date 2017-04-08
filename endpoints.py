@@ -7,10 +7,9 @@ from falcon_cors import CORS
 from jobs import user_search
 from utils import records_to_json
 
-public_cors = CORS(allow_all_origins=True)
 
 class SearchResource(object):
-    cors = public_cors
+    cors_enabled = False
     def on_get(self, req, resp, search_query):
         """Handles GET requests"""
         search_results = user_search(search_query)
