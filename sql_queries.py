@@ -1,3 +1,4 @@
+# In place of a better update of existing tables on each iteration of job to crawl web
 SQL_DROP_TABLES = """
     DROP TABLE keyword, url
 """
@@ -24,5 +25,13 @@ SQL_INSERT_KEYWORD_ROWS = """
 
 SQL_INSERT_URL_ROWS = """
     INSERT INTO url (keyword_id, url_text) VALUES
-      :urls
+      (unnest(array[:keyword_ids]), (unnest(array[:urls_text])))
+"""
+
+SQL_GET_KEYWORDS = """
+    SELECT
+      keyword.id as id,
+      keyword.keyword_text as text
+    FROM
+      keyword
 """

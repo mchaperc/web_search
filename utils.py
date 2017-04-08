@@ -1,6 +1,6 @@
 import records
 
-from constants import DB_URL
+from credentials import DB_URL
 
 db = records.Database(DB_URL)
 
