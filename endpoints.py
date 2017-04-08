@@ -7,9 +7,10 @@ from falcon_cors import CORS
 from jobs import user_search
 from utils import records_to_json
 
-cors = CORS(allow_origins_list=['file:///Users/mattchastain/Desktop/dev/web_search_frontend/search/'])
+public_cors = CORS(allow_all_origins=True)
 
 class SearchResource(object):
+    cors = public_cors
     def on_get(self, req, resp, search_query):
         """Handles GET requests"""
         search_results = user_search(search_query)
@@ -17,7 +18,7 @@ class SearchResource(object):
         resp.body = json.dumps(records_to_json(search_results))
 
 
-app = falcon.API(middleware=[cors.middleware])
+app = falcon.API()
 
 search = SearchResource()
 
