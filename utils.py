@@ -42,5 +42,5 @@ def split_string(source, splitlist=' ,;?\n&'):
 def records_to_json(records, type='url'):
     body = []
     for record in records:
-        body.append({'url': record.url})
+        body.append({'url': record.url, 'title': record.title, 'description': record.description})
     return body

@@ -5,6 +5,7 @@ from utils import split_string
 
 from bs4 import BeautifulSoup
 
+
 def union(arr1, arr2):
     for el in arr2:
         if el not in arr1:
@@ -12,12 +13,14 @@ def union(arr1, arr2):
     return arr1
 
 
-def get_keywords(page):
+def get_keywords(page, current_url=''):
     metas = page.find_all('meta')
     keywords = []
     for meta in metas:
         if meta.get('name') == 'keywords':
             keywords += split_string(meta.get('content'))
+        elif meta.get('name') == 'description':
+            set_page_description(meta.get('content'), current_url)
     for elem in page.findAll(['script', 'style']):
         elem.extract()
     page = page.getText(separator=u' ').translate({ord(c): None for c in string.punctuation})
@@ -35,6 +38,20 @@ def get_links(page, current_url):
             else:
                 result.append(link.get('href'))
     return result
+
+
+def get_page_title(page):
+    try:
+        return page.title.string.strip()
+    except:
+        return ''
+
+
+def set_page_description(description, url):
+    if len(description) > 135:
+        jobs.index[url]['description'] = description[:135] + '...'
+        return
+    jobs.index[url]['description'] = description
 
 
 def get_page(url):
@@ -61,8 +78,11 @@ def crawl_controller(seed, max_depth=1):
         url = to_crawl.pop()
         if url not in jobs.index:
             page = get_page(url)
-            keywords = get_keywords(page)
             next_depth = union(next_depth, get_links(page, url))
+            jobs.index[url] = {
+                'title': get_page_title(page),
+            }
+            keywords = get_keywords(page, url)
             for word in keywords:
                 if word not in jobs.index:
                     jobs.index[word] = [url]
