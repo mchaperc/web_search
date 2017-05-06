@@ -6,7 +6,7 @@ SQL_DROP_TABLES = """
 SQL_ADD_KEYWORD_TABLE = """
     CREATE TABLE keyword(
       id SERIAL PRIMARY KEY UNIQUE NOT NULL,
-      keyword_text VARCHAR(255) NOT NULL
+      keyword_text TEXT NOT NULL
     )
 """
 
@@ -14,7 +14,7 @@ SQL_ADD_URL_TABLE = """
     CREATE TABLE url(
       id SERIAL PRIMARY KEY UNIQUE NOT NULL,
       keyword_id INT NOT NULL,
-      url_text VARCHAR(255) NOT NULL
+      url_text TEXT NOT NULL
     )
 """
 
@@ -22,8 +22,8 @@ SQL_ADD_URL_META_TABLE = """
     CREATE TABLE url_meta(
       id SERIAL PRIMARY KEY UNIQUE NOT NULL,
       url_id INT NOT NULL,
-      title VARCHAR(100),
-      description VARCHAR(138)
+      title TEXT,
+      description TEXT
     )
 """
 
@@ -43,7 +43,8 @@ SQL_INSERT_URL_META = """
 """
 
 SQL_GET_URLS_FROM_KEYWORDS = """
-    SELECT
+    SELECT DISTINCT ON (url.url_text)
+      url.id AS id,
       url.url_text AS url,
       url_meta.title AS title,
       url_meta.description AS description
@@ -55,6 +56,18 @@ SQL_GET_URLS_FROM_KEYWORDS = """
       keyword.keyword_text IN :search_query
       AND url.keyword_id = keyword.id
       AND url.id = url_meta.url_id
+    LIMIT 20 OFFSET (:page_number * 1)
+"""
+
+SQL_GET_PAGE_COUNT = """
+    SELECT
+        count(url.id) / 20 AS pages
+    FROM
+      keyword,
+      url
+    WHERE
+      keyword.keyword_text IN :search_query
+      AND url.keyword_id = keyword.id
 """
 
 SQL_GET_URLS_WITHOUT_KEYWORDS = """

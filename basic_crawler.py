@@ -1,7 +1,8 @@
 import requests, string
 import jobs
+import re
 
-from utils import split_string
+from utils import split_string, http_normalize_slashes
 
 from bs4 import BeautifulSoup
 
@@ -75,7 +76,7 @@ def crawl_controller(seed, max_depth=1):
     next_depth = []
     current_depth = 0
     while len(to_crawl) and current_depth <= max_depth:
-        url = to_crawl.pop()
+        url = http_normalize_slashes(to_crawl.pop())
         if url not in jobs.index:
             page = get_page(url)
             next_depth = union(next_depth, get_links(page, url))
@@ -91,3 +92,8 @@ def crawl_controller(seed, max_depth=1):
             if not to_crawl:
                 to_crawl, next_depth = next_depth, []
                 current_depth += 1
+                print('===========')
+                print(current_depth)
+                print(url)
+            print('============')
+            print(url)

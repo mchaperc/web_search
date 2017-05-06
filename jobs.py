@@ -1,5 +1,5 @@
 from basic_crawler import crawl_controller
-from utils import execute_sql, get_many, split_string
+from utils import execute_sql, get_one, get_many
 from sql_queries import *
 
 index = {}
@@ -7,7 +7,7 @@ index = {}
 
 def crawl_web(links):
     for link in links:
-        crawl_controller(link, 0)
+        crawl_controller(link, 3)
     write_index_to_db(index)
 
 
@@ -24,7 +24,7 @@ def write_index_to_db(data):
 
 
 def write_keywords(data):
-    keywords = [keyword for keyword in data]
+    keywords = [keyword.replace('\x00', '') for keyword in data]
     execute_sql(SQL_INSERT_KEYWORD_ROWS, keywords=keywords)
 
 
@@ -46,16 +46,23 @@ def write_url_meta(urls, data):
     for url in urls:
         if url.url_text in data:
             url_ids.append(url.id)
-            titles.append(data[url.url_text]['title'])
+            try:
+                titles.append(data[url.url_text]['title'])
+            except:
+                titles.append(url.url_text)
             try:
                 descriptions.append(data[url.url_text]['description'])
             except:
-                descriptions.append('')
+                descriptions.append(url.url_text)
     execute_sql(SQL_INSERT_URL_META, url_ids=url_ids, titles=titles, descriptions=descriptions)
 
 
-def user_search(search_query=''):
+def user_search(search_query='', page_number=1):
     if search_query:
-        search_query = split_string(search_query)
-        return get_many(SQL_GET_URLS_FROM_KEYWORDS, search_query=tuple(search_query))
+        return get_many(SQL_GET_URLS_FROM_KEYWORDS, search_query=tuple(search_query), page_number=page_number)
     return get_many(SQL_GET_URLS_WITHOUT_KEYWORDS)
+
+
+def get_page_count(search_query=''):
+    return get_one(SQL_GET_PAGE_COUNT, search_query=search_query)
+
