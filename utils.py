@@ -45,6 +45,7 @@ def records_to_json(records, type='url'):
         body.append({'url': record.url, 'title': record.title, 'description': record.description})
     return body
 
+
 def http_normalize_slashes(url):
     url = str(url)
     segments = url.split('/')

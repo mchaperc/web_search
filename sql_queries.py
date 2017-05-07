@@ -64,10 +64,12 @@ SQL_GET_PAGE_COUNT = """
         count(url.id) / 20 AS pages
     FROM
       keyword,
-      url
+      url,
+      url_meta
     WHERE
       keyword.keyword_text IN :search_query
       AND url.keyword_id = keyword.id
+      AND url.id = url_meta.url_id
 """
 
 SQL_GET_URLS_WITHOUT_KEYWORDS = """

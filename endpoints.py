@@ -20,8 +20,9 @@ class SearchResource(object):
         if search_query:
             search_query = split_string(search_query)
         search_results = user_search(search_query, page_number)
+        pages = get_page_count(search_query)
         results_package = {
-            # 'pages': get_page_count(search_query),
+            'pages': pages.pages,
             'search_results': records_to_json(search_results),
         }
         resp.status = falcon.HTTP_200

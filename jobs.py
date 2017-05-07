@@ -64,5 +64,5 @@ def user_search(search_query='', page_number=1):
 
 
 def get_page_count(search_query=''):
-    return get_one(SQL_GET_PAGE_COUNT, search_query=search_query)
+    return get_one(SQL_GET_PAGE_COUNT, search_query=tuple(search_query))
 
